@@ -1,0 +1,25 @@
+@model MyEnterpriseApp.Models.AppInfo
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Enterprise App</title>
+    <link rel="stylesheet" href="/css/site.css" />
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>🚀 @Model.AppName</h1>
+
+        <div class="card">
+            <p><b>Version:</b> @Model.Version</p>
+            <p><b>Environment:</b> @Model.Environment</p>
+        </div>
+
+        <p>Deployed using Azure DevOps CI/CD Pipeline</p>
+
+    </div>
+
+</body>
+</html>

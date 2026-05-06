@@ -1,0 +1,46 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  buildConfiguration: 'Release'
+
+stages:
+
+- stage: Build
+  jobs:
+  - job: BuildJob
+    steps:
+
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        version: '8.x'
+
+    - script: dotnet restore
+
+    - script: dotnet build --configuration $(buildConfiguration)
+
+    - script: dotnet publish -c $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'drop'
+
+- stage: Deploy
+  dependsOn: Build
+  jobs:
+  - job: DeployJob
+    steps:
+
+    - download: current
+      artifact: drop
+
+    - task: AzureWebApp@1
+      inputs:
+        azureSubscription: 'azure-service-connection'
+        appName: 'your-app-service-name'
+        package: '$(Pipeline.Workspace)/drop'
